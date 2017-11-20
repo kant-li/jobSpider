@@ -13,13 +13,15 @@ import csv
 # url = 'http://sou.zhaopin.com/jobs/searchresult.ashx?bj=160000&sj=2041&jl=%E7%A6%8F%E5%B7%9E&p='    ##php
 # url = 'http://sou.zhaopin.com/jobs/searchresult.ashx?bj=160000&sj=864&jl=%E7%A6%8F%E5%B7%9E&p='    ##web前端
 # url = 'http://sou.zhaopin.com/jobs/searchresult.ashx?bj=160000&sj=2038&jl=%E7%A6%8F%E5%B7%9E&p='    ##IOS
-url = 'http://sou.zhaopin.com/jobs/searchresult.ashx?bj=160000&sj=2042&jl=%E7%A6%8F%E5%B7%9E&p='    ##C
+# url = 'http://sou.zhaopin.com/jobs/searchresult.ashx?bj=160000&sj=2042&jl=%E7%A6%8F%E5%B7%9E&p='    ##C
+url = 'http://sou.zhaopin.com/jobs/searchresult.ashx?jl=%E7%A6%8F%E5%B7%9E&kw=.net&isadv=0&isfilter=1&sg=3ed3b548f6cd4b41a75bb6f6cfe995d3&p='    ##.net
 
 
 
 headers = {'User-Agent':'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/48.0.2564.116 Safari/537.36'}
 
 def jobFind(url, headers):
+    ##爬区网页
     # req = Request(url=quote(url, safe='/:?='), headers=headers)
     req = Request(url=url, headers=headers)
     response = urlopen(req)
@@ -88,9 +90,10 @@ def companyInfo(url, headers, data):
             data.append(text)
     writer.writerow(data)
 
+#主流程
 csvfile = open('csv_test.csv', 'w', encoding='utf-8-sig')
 writer = csv.writer(csvfile)
-for p in range(1,2):
+for p in range(1,10):
     url1 = url + str(p)
     print('-' * 20 + str(p))
     print(url1)
