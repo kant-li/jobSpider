@@ -1,0 +1,4 @@
+#忽略本地CSV文件和编辑后的xlsx文件
+*.xlsx
+*.xls
+*.csv
