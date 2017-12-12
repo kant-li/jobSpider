@@ -44,7 +44,7 @@ def jobFind(keyWord, cmpList, url, headers):
         if companyName is not None:
             companyNameClean = companyName.group()[3:]
             if companyNameClean not in cmpList:
-                print(companyNameClean)
+                # print(companyNameClean)
                 cmpList.append(companyNameClean)
                 data.append(companyNameClean)
                 ###针对公司寻找链接
@@ -53,7 +53,7 @@ def jobFind(keyWord, cmpList, url, headers):
                 # print(companyDescribe2)
                 companyLink = pattern2.search(companyDescribe2)
                 if companyLink is not None:
-                    print(companyLink.group())
+                    # print(companyLink.group())
                     data.append(companyLink.group())
                     companyInfo(url=companyLink.group(), headers=headers, data=data)
         else:
@@ -86,7 +86,6 @@ def jobInfo(url, headers):
         text = t.strip().replace('\n', ' ')
         if text != '':
             data.append(text)
-    # print(data)
     writer.writerow(data)
 
 def companyInfo(url, headers, data):
@@ -100,12 +99,19 @@ def companyInfo(url, headers, data):
         text = i.strip().replace('\n', ' ')
         if text != '':
             data.append(text)
-    writer.writerow(data)
+    print(data[1])
+    time.sleep(6)
+    basic_info = geetest.query_detail(data[1], GSXT_HOST_FJ, GSXT_INDEX_FJ)
+    if basic_info is not None:
+        full_data = data + basic_info
+        writer.writerow(full_data)
 
 #主流程
 csvfile = open('csv_test.csv', 'w', encoding='utf-8-sig', newline='')
 writer = csv.writer(csvfile)
-titles = ["岗位类别","公司名称","链接","地址"]
+titles = ["岗位类别","公司名称","链接","地址"\
+            ,"统一社会信用代码","企业名称","类型","法定代表人","注册资本","成立日期"\
+            ,"经营期限自","经营期限至","登记机关","核准日期","登记状态","住所","经营范围"]
 writer.writerow(titles)
 for key in urlDict.keys():
     p = 0

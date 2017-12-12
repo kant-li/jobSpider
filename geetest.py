@@ -89,14 +89,18 @@ def parser_uuid(html_doc):
     _firstResult = _soup.find('div', class_='tableContent page-item')
     _result = []
     uuid_pattern = re.compile(r'\(\'+.*\'\)')
-    uuid_info = uuid_pattern.search(str(_firstResult)).group()
-    _result.append(uuid_info[2:-7])
-    _result.append(uuid_info[-4:-2])
-    # print(str(_firstResult))
-    # print('-' * 20)
-    # print(uuid)
-    # print(uuid_tab)
-    return _result
+    uuid_find = uuid_pattern.search(str(_firstResult))
+    if uuid_find is None:
+        return None
+    else:
+        uuid_info = uuid_find.group()
+        _result.append(uuid_info[2:-7])
+        _result.append(uuid_info[-4:-2])
+        # print(str(_firstResult))
+        # print('-' * 20)
+        # print(uuid)
+        # print(uuid_tab)
+        return _result
 
 def get_main(session):
     '''Get gsxt 首页'''
@@ -236,6 +240,8 @@ def post_search(session, validate, keyword, token):
     if _response.status_code != 200:
         return None, None
     uuid_info = parser_uuid(_response.text)
+    if uuid_info is None:
+        return ["未查询到相关信息"]
     token_info = parse_token(_response.text)
     return post_for_detail(session, uuid_info, token_info)
 
