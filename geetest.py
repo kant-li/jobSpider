@@ -105,13 +105,16 @@ def parser_uuid(html_doc):
 def get_main(session):
     '''Get gsxt 首页'''
     _url = INDEX
-    logging.debug('GET ' + _url)
+    # logging.debug('GET ' + _url)
     _headers = {'Accept': constants.ACCEPT_HTML,
                 'Accept-Language': constants.ACCEPT_LANGUAGE,
                 'User-Agent': constants.USER_AGENT}
     _response = session.get(_url, headers=_headers, timeout=TIMEOUT)
-    logging.debug('response code:' + str(_response.status_code))
-    return parse_token(_response.text) if _response.status_code == 200 else None
+    if _response.status_code == 200:
+        return parse_token(_response.text)
+    else:
+        print("请求区域首页：" + str(_response.status_code))
+        return None
 
 def get_register(session):
     '''
@@ -220,7 +223,7 @@ def parser_basic_info(html_doc):
 def post_search(session, validate, keyword, token):
     '''	POST /notice/search/ent_info_list HTTP/1.1'''
     _url = INDEX + 'search/ent_info_list'
-    logging.debug('POST ' + _url)
+    # logging.debug('POST ' + _url)
     _headers = {'Accept': constants.ACCEPT_HTML,
                 'Accept-Language': constants.ACCEPT_LANGUAGE,
                 'User-Agent': constants.USER_AGENT,
@@ -235,7 +238,7 @@ def post_search(session, validate, keyword, token):
                ('session.token', token),
                ('condition.keyword', keyword)]
     _response = session.post(_url, headers=_headers, data=_params, timeout=TIMEOUT)
-    logging.debug('response code: ' + str(_response.status_code))
+    # logging.debug('response code: ' + str(_response.status_code))
     #logger.debug('response text: ' + _response.text)
     if _response.status_code != 200:
         return None, None
@@ -267,10 +270,15 @@ def query_keyword(session, keyword, token):
     if not token:
         token = get_main(session)
         if not token:
-            return None
+            print('None token')
+            # validate = get_validate(session, keyword)
+            token = get_main(session)
+            validate = get_validate(session, keyword)
+            return post_search(session, validate, keyword, token)
 
     validate = get_validate(session, keyword)
     if not validate:
+        print('None validate')
         return None
 
     return post_search(session, validate, keyword, token)
@@ -305,7 +313,9 @@ def query_keyword_helper(keyword):
             basic_info = query_keyword(session, keyword, _token)
             if basic_info:
                 print(basic_info)
-        return True
+                return basic_info
+            else:
+                print('无相关信息')
     except requests.RequestException as _e:
         logging.error(_e)
         return False
@@ -337,7 +347,7 @@ def query_detail(keyword, GSXT_HOST, GSXT_INDEX):
     查询一家企业的基本注册信息明细
     '''
     config(GSXT_HOST, GSXT_INDEX)
-    query_keyword_helper(keyword)
+    return query_keyword_helper(keyword)
 
 
 # if __name__ == "__main__":

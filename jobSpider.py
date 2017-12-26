@@ -13,14 +13,15 @@ import geetest
 GSXT_HOST_FJ = 'http://fj.gsxt.gov.cn'
 GSXT_INDEX_FJ = GSXT_HOST_FJ + '/notice/'
 
-urlDict = {'java':'http://sou.zhaopin.com/jobs/searchresult.ashx?bj=160000&sj=2040&jl=%E7%A6%8F%E5%B7%9E&p=',\
-            'android':'http://sou.zhaopin.com/jobs/searchresult.ashx?bj=160000&sj=2039&jl=%E7%A6%8F%E5%B7%9E&p=',\
-            'php':'http://sou.zhaopin.com/jobs/searchresult.ashx?bj=160000&sj=2041&jl=%E7%A6%8F%E5%B7%9E&p=',\
-            'web前端':'http://sou.zhaopin.com/jobs/searchresult.ashx?bj=160000&sj=864&jl=%E7%A6%8F%E5%B7%9E&p=',\
-            'ios':'http://sou.zhaopin.com/jobs/searchresult.ashx?bj=160000&sj=2038&jl=%E7%A6%8F%E5%B7%9E&p=',\
-            'C':'http://sou.zhaopin.com/jobs/searchresult.ashx?bj=160000&sj=2042&jl=%E7%A6%8F%E5%B7%9E&p=',\
-            '.net':'http://sou.zhaopin.com/jobs/searchresult.ashx?jl=%E7%A6%8F%E5%B7%9E&'\
-                    + 'kw=.net&isadv=0&isfilter=1&sg=3ed3b548f6cd4b41a75bb6f6cfe995d3&p='}
+# urlDict = {'java':'http://sou.zhaopin.com/jobs/searchresult.ashx?bj=160000&sj=2040&jl=%E7%A6%8F%E5%B7%9E&p=',\
+#             'android':'http://sou.zhaopin.com/jobs/searchresult.ashx?bj=160000&sj=2039&jl=%E7%A6%8F%E5%B7%9E&p=',\
+#             'php':'http://sou.zhaopin.com/jobs/searchresult.ashx?bj=160000&sj=2041&jl=%E7%A6%8F%E5%B7%9E&p=',\
+#             'web前端':'http://sou.zhaopin.com/jobs/searchresult.ashx?bj=160000&sj=864&jl=%E7%A6%8F%E5%B7%9E&p=',\
+#             'ios':'http://sou.zhaopin.com/jobs/searchresult.ashx?bj=160000&sj=2038&jl=%E7%A6%8F%E5%B7%9E&p=',\
+#             'C':'http://sou.zhaopin.com/jobs/searchresult.ashx?bj=160000&sj=2042&jl=%E7%A6%8F%E5%B7%9E&p=',\
+#             '.net':'http://sou.zhaopin.com/jobs/searchresult.ashx?jl=%E7%A6%8F%E5%B7%9E&'\
+#                     + 'kw=.net&isadv=0&isfilter=1&sg=3ed3b548f6cd4b41a75bb6f6cfe995d3&p='}
+urlDict = {'java':'http://sou.zhaopin.com/jobs/searchresult.ashx?bj=160000&sj=2040&jl=%E7%A6%8F%E5%B7%9E&p='}
 
 headers = {'User-Agent':'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_3)\
             AppleWebKit/537.36 (KHTML, like Gecko) Chrome/48.0.2564.116 Safari/537.36'}
@@ -104,7 +105,11 @@ def companyInfo(url, headers, data):
     basic_info = geetest.query_detail(data[1], GSXT_HOST_FJ, GSXT_INDEX_FJ)
     if basic_info is not None:
         full_data = data + basic_info
-        writer.writerow(full_data)
+    else:
+        full_data = data + ['未查询到相关信息']
+    print('-'*20 + 'writer')
+    print(full_data)
+    writer.writerow(full_data)
 
 #主流程
 csvfile = open('csv_test.csv', 'w', encoding='utf-8-sig', newline='')
@@ -115,9 +120,9 @@ titles = ["岗位类别","公司名称","链接","地址"\
 writer.writerow(titles)
 for key in urlDict.keys():
     p = 0
-    cmpInPage = 20      # 页面内的公司数，用于判定是否末页
+    cmpInPage = 30      # 页面内的公司数，用于判定是否末页
     cmpList = []        # 同一个岗位已收集的公司名称，避免重复收集数据
-    while cmpInPage > 10:   #如果页面内公司数少于10，则判定为末页，否则继续下一页
+    while cmpInPage > 20:   #如果页面内公司数少于10，则判定为末页，否则继续下一页
         p += 1
         url1 = urlDict[key] + str(p)
         print(key + '-' * 20 + str(p))
